@@ -128,8 +128,14 @@ function defineProxyRoutes (drydock) {
           href
         } } = req;
 
+        delete headers.host;
+        let url = proxyRoute.forwardTo;
+        if (proxyRoute && proxyRoute.forwardTo instanceof Function) {
+          url = proxyRoute.forwardTo(req);
+        }
+
         request({
-          url: proxyRoute.forwardTo,
+          url,
           method,
           headers,
           body: payload,
