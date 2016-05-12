@@ -89,7 +89,15 @@ export default class Drydock {
     this.server = new Server(this.ip, this.port, {
       router: { stripTrailingSlash: true },
       cors: this.cors,
-      state: { cookies: { failAction: "ignore" } }
+      state: { cookies: { failAction: "ignore" } },
+      debug: { request: ["error"] }
+    });
+
+    this.server.on("response", (request) => {
+      if (request.response.statusCode >= 400) {
+        log(
+          `${request.method.toUpperCase()} ${request.url.path} -> ${request.response.statusCode}`);
+      }
     });
 
     defineApiRoutes(this);
